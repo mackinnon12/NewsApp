@@ -92,13 +92,43 @@ struct ContentView: View {
         NavigationView {
             List(articles, id: \.id) { item in
                 NavigationLink(destination: StoryView(title: item.title, author: item.author, description: item.description, url: item.url, urlToImage: item.urlToImage)) {
-                    
-                    VStack(alignment: .leading) {
-                        Text(item.author)
-                            .font(.headline)
-                        Text(item.title)
+                    VStack {
+                        AsyncImage(url: URL(string: item.urlToImage)) { image in
+                            image.resizable()
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 255, height: 255)
+                        .cornerRadius(10)
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Tech Stories")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                Text(item.title)
+                                    .font(.headline)
+                                    .fontWeight(.black)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(3)
+                                Text(item.author.uppercased())
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .layoutPriority(100)
+                            
+                            Spacer()
+                        }
+                        .padding()
                     }
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 0.1), lineWidth: 1)
+                    )
+                    .padding([.top, .horizontal])
                 }
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             }.task {
                 await loadData()
             }.navigationTitle("Top Tech Stories")
