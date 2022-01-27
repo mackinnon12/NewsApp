@@ -103,7 +103,7 @@ struct ContentView: View {
                         } placeholder: {
                             ProgressView()
                         }
-                        .frame(width: 300, height: 200)
+                        .frame(width: 275, height: 200)
                         .cornerRadius(10)
                         HStack {
                             VStack(alignment: .leading) {
