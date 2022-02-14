@@ -23,9 +23,8 @@ struct ContentView: View {
                     Image("bbcLogo")
                     Text("BBC")
                 }
-                .tag("bbc")
             //SettingsView()
-            Text("Settings")
+            Text("Settings, Change password, logout, change email")
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")

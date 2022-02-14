@@ -18,6 +18,7 @@ struct Article: Codable, Identifiable {
     var description: String
     var url: String
     var urlToImage: String
+    var publishedAt: String
     
     enum CodingKeys: CodingKey {
         case author
@@ -25,6 +26,7 @@ struct Article: Codable, Identifiable {
         case description
         case url
         case urlToImage
+        case publishedAt
     }
     
     init(from decoder: Decoder) throws {
@@ -34,6 +36,7 @@ struct Article: Codable, Identifiable {
         description = try container.decode(String.self, forKey: .description)
         url = try container.decode(String.self, forKey: .url)
         urlToImage = try container.decode(String.self, forKey: .urlToImage)
+        publishedAt = try container.decode(String.self, forKey: .publishedAt)
     }
 }
 //View Story
@@ -43,6 +46,7 @@ struct StoryView: View {
     let description: String
     let url: String
     let urlToImage: String
+    let publishedAt: String
     
     var body: some View {
         AsyncImage(url: URL(string: urlToImage)) { image in
@@ -80,7 +84,7 @@ struct NewsView: View {
     
     @State private var apiNews = "https://newsapi.org/v2/top-headlines?sources=cbc-news&apiKey=c2d3bd7de4b94226abe97ef19abd21a3"
     
-    @State private var navTitle = "CBC | Top Stories"
+    @State private var navTitle = "cbcBanner"
     
     @State private var articles = [Article]()
     func loadData() async {
@@ -101,7 +105,7 @@ struct NewsView: View {
     var body: some View {
         NavigationView {
             List(articles, id: \.id) { item in
-                NavigationLink(destination: StoryView(title: item.title, author: item.author, description: item.description, url: item.url, urlToImage: item.urlToImage)) {
+                NavigationLink(destination: StoryView(title: item.title, author: item.author, description: item.description, url: item.url, urlToImage: item.urlToImage, publishedAt: item.publishedAt)) {
                     VStack {
                         AsyncImage(url: URL(string: item.urlToImage)) { image in
                             image.resizable()
@@ -109,50 +113,88 @@ struct NewsView: View {
                             ProgressView()
                         }
                         .frame(width: 275, height: 200)
-                        .cornerRadius(10)
+                        .cornerRadius(radius: 10, corners: [.topLeft])
                         HStack {
                             VStack(alignment: .leading) {
-                                Text("Trending")
-                                    .font(.headline)
-                                    .foregroundColor(.secondary)
+                                Image(navTitle)
+                                    .resizable()
+                                    .frame(width: 100, height: 15)
                                 Text(item.title)
-                                    .font(.headline)
+                                    .font(.subheadline)
                                     .fontWeight(.black)
                                     .foregroundColor(.primary)
-                                    .lineLimit(3)
-                                Text(item.author.uppercased())
+                                Divider()
+                                let time = item.publishedAt.replacingOccurrences(of: "[a-zA-Z]+.*[a-zA-Z]+", with: "", options: [.regularExpression])
+                                Text("Published at \(time)")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                
                             }
                             .layoutPriority(100)
-                            
                             Spacer()
                         }
                         .padding()
                     }
+                    .background(Color.white)
                     .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 0.1), lineWidth: 1)
-                    )
                     .padding([.top, .horizontal])
                 }
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
             }.task {
                 if (newsChoice == "cbc") {
-                    navTitle = "CBC | Top Stories"
+                    navTitle = "cbcBanner"
                     apiNews = "https://newsapi.org/v2/top-headlines?sources=cbc-news&apiKey=daf917ff9f654c36878582b201d54693"
                 } else if (newsChoice == "bbc") {
-                    navTitle = "BBC | Top Stories"
+                    navTitle = "bbcLogo"
                     apiNews = "https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=daf917ff9f654c36878582b201d54693"
                 }
                 await loadData()
-            }.navigationBarTitle(Text(navTitle), displayMode: .large)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        Text("News")
+                            .font(.title)
+                            .fontWeight(.heavy)
+                        Divider()
+                        Text(Date.now, format: .dateTime.month(.wide).day())
+                            .font(.title2)
+                            .foregroundColor(.gray)
+                            .fontWeight(.heavy)
+                    }
+                }
+            }
+            
         }
     }
 }
+struct CornerRadiusStyle: ViewModifier {
+    var radius: CGFloat
+    var corners: UIRectCorner
+    
+    struct CornerRadiusShape: Shape {
+        
+        var radius = CGFloat.infinity
+        var corners = UIRectCorner.allCorners
+        
+        func path(in rect: CGRect) -> Path {
+            let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+            return Path(path.cgPath)
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .clipShape(CornerRadiusShape(radius: radius, corners: corners))
+    }
+}
 
+extension View {
+    func cornerRadius(radius: CGFloat, corners: UIRectCorner) -> some View {
+        ModifiedContent(content: self, modifier: CornerRadiusStyle(radius: radius, corners: corners))
+    }
+}
 //struct NewsView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        NewsView()
