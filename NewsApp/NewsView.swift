@@ -121,22 +121,20 @@ struct NewsView: View {
                                     .frame(width: 100, height: 15)
                                 Text(item.title)
                                     .font(.subheadline)
-                                    .fontWeight(.black)
-                                    .foregroundColor(.primary)
+                                    .fontWeight(.heavy)
+                                    .foregroundColor(.black)
                                 Divider()
                                 let time = item.publishedAt.replacingOccurrences(of: "[a-zA-Z]+.*[a-zA-Z]+", with: "", options: [.regularExpression])
                                 Text("Published at \(time)")
                                     .font(.caption)
-                                
+                                    .foregroundColor(.black)
                             }
-                            .layoutPriority(100)
-                            Spacer()
                         }
                         .padding()
                     }
                     .background(Color.white)
                     .cornerRadius(10)
-                    .padding([.top, .horizontal])
+                    .padding([.horizontal])
                 }
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
