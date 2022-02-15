@@ -143,7 +143,7 @@ struct NewsView: View {
                     navTitle = "cbcBanner"
                     apiNews = "https://newsapi.org/v2/top-headlines?sources=cbc-news&apiKey=daf917ff9f654c36878582b201d54693"
                 } else if (newsChoice == "bbc") {
-                    navTitle = "bbcLogo"
+                    navTitle = "bbcBanner"
                     apiNews = "https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=daf917ff9f654c36878582b201d54693"
                 }
                 await loadData()
