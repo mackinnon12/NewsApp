@@ -11,26 +11,26 @@ struct ContentView: View {
     var newsChoice = "bbc"
     
     var body: some View {
-        
-        TabView() {
-            NewsView(newsChoice: "cbc")
-                .tabItem {
-                    Image("cbcLogo")
-                    Text("CBC")
-                }
-            NewsView(newsChoice: "bbc")
-                .tabItem {
-                    Image("bbcLogo")
-                    Text("BBC")
-                }
-            //SettingsView()
-            Text("Settings, Change password, logout, change email")
-                .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
-                }
-        }
+            TabView() {
+                NewsView(newsChoice: "cbc")
+                    .tabItem {
+                        Image("cbcLogo")
+                        Text("CBC")
+                    }
+                NewsView(newsChoice: "bbc")
+                    .tabItem {
+                        Image("bbcLogo")
+                        Text("BBC")
+                    }
+                //SettingsView()
+                Text("Settings, Change password, logout, change email")
+                    .tabItem {
+                        Image(systemName: "gear")
+                        Text("Settings")
+                    }
+            }
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
